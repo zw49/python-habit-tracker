@@ -6,6 +6,8 @@ import requests
 
 DATA = Path(__file__).parent / "data.csv"
 HABITS = ["4runner"]
+NTFY_COMPLETION_TOPIC = "4runner_completion_notification"
+NTFY_INCOMPLETION_TOPIC = "4runner_incompletion_notification"
 
 
 def send_notification(message: str, topic: str) -> None:
@@ -35,7 +37,7 @@ def complete(habit: str, day: date) -> bool:
     save(pd.concat([df, new_row], ignore_index=True))
     send_notification(
         f"Z completed {habit} on {day.isoformat()}",
-        topic="4runner_completion_notification",
+        topic=NTFY_COMPLETION_TOPIC,
     )
     return True
 
@@ -48,7 +50,7 @@ def uncomplete(habit: str, day: date) -> bool:
     save(df[~mask].reset_index(drop=True))
     send_notification(
         f"Z marked {habit} as incomplete on {day.isoformat()}",
-        topic="4runner_incompletion_notification",
+        topic=NTFY_INCOMPLETION_TOPIC,
     )
     return True
 

@@ -3,7 +3,14 @@ from datetime import date, timedelta
 import pandas as pd
 import streamlit as st
 
-from habits import HABITS, complete, load, streaks, uncomplete
+from habits import (
+    HABITS,
+    NTFY_COMPLETION_TOPIC,
+    complete,
+    load,
+    streaks,
+    uncomplete,
+)
 
 
 @st.dialog("Complete a habit")
@@ -64,8 +71,17 @@ def render_streak(habit: str, habit_days: set[date], current: int) -> None:
 
 st.title("Habit Tracker")
 st.caption(f"Today: {today.isoformat()}")
-if st.button("Complete a habit", type="primary"):
-    complete_dialog()
+btn_col, info_col, _ = st.columns([2, 2, 4.7], gap="xxsmall")
+with btn_col:
+    if st.button("Complete a habit", type="primary"):
+        complete_dialog()
+with info_col:
+    with st.popover("Notification topic"):
+        st.markdown(
+            "Subscribe to this topic on [ntfy.sh](https://ntfy.sh) to receive "
+            "a notification on every completion:"
+        )
+        st.code(NTFY_COMPLETION_TOPIC, language=None)
 
 with st.expander("Stats"):
     if df.empty:
